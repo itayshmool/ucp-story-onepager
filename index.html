@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My UCP Story — Leadership in the Age of AI</title>
+  <meta name="description" content="How I went from a midnight curiosity about Google's UCP protocol to a fully working Wix payment integration — in one weekend, using AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ───────────────────────────── RESET & BASE ───────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lime: #b2f000;
+      --lime-dim: #7ab000;
+      --lime-glow: rgba(178, 240, 0, 0.18);
+      --lime-glow-strong: rgba(178, 240, 0, 0.35);
+      --white: #f5f5f5;
+      --grey: #888;
+      --dark: #111111;
+      --darker: #0a0a0a;
+      --card: #151515;
+      --border: rgba(178, 240, 0, 0.2);
+      --ff-display: 'Bebas Neue', sans-serif;
+      --ff-body: 'Space Grotesk', sans-serif;
+      --ff-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--darker);
+      color: var(--white);
+      font-family: var(--ff-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── Noise Texture Overlay ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--darker); }
+    ::-webkit-scrollbar-thumb { background: var(--lime); border-radius: 2px; }
+
+    /* ───────────────────────────── TYPOGRAPHY ───────────────────────────── */
+    h1, h2, h3 { line-height: 1; letter-spacing: -0.01em; }
+
+    .display {
+      font-family: var(--ff-display);
+      letter-spacing: 0.02em;
+    }
+
+    .mono { font-family: var(--ff-mono); }
+
+    .lime { color: var(--lime); }
+    .grey { color: var(--grey); }
+
+    /* ───────────────────────────── LAYOUT ───────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 80px 0; }
+
+    /* ─── Divider ─── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 24px;
+    }
+
+    /* ─── Entrance animations ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ───────────────────────────── NAV ───────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .nav-logo {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      color: var(--lime);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .nav-tag {
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      color: var(--grey);
+      letter-spacing: 0.1em;
+    }
+
+    /* ───────────────────────────── HERO ───────────────────────────── */
+    #hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 80px;
+      padding-bottom: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Green radial glow bottom-right */
+    #hero::after {
+      content: '';
+      position: absolute;
+      bottom: -120px;
+      right: -80px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(ellipse at center, rgba(178,240,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--lime);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-headline {
+      font-family: var(--ff-display);
+      font-size: clamp(60px, 18vw, 110px);
+      line-height: 0.92;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .hero-headline .accent {
+      color: var(--lime);
+      display: block;
+    }
+
+    .hero-headline .sub {
+      font-size: clamp(36px, 11vw, 68px);
+      color: var(--white);
+      display: block;
+    }
+
+    /* Photo Card */
+    .hero-photo-card {
+      margin: 40px 0;
+      position: relative;
+    }
+
+    .hero-photo-card img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      border-radius: 4px;
+      filter: grayscale(20%) contrast(1.05);
+    }
+
+    .photo-border {
+      position: absolute;
+      inset: -2px;
+      border: 2px solid var(--lime);
+      border-radius: 6px;
+      pointer-events: none;
+      box-shadow: 0 0 30px var(--lime-glow), inset 0 0 30px var(--lime-glow);
+    }
+
+    .photo-badge {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      background: rgba(10, 10, 10, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    .photo-badge-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--white);
+    }
+
+    .photo-badge-title {
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      color: var(--lime);
+      margin-top: 2px;
+    }
+
+    .photo-corner {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--lime);
+      color: var(--darker);
+      font-family: var(--ff-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 4px 8px;
+      border-radius: 2px;
+    }
+
+    .hero-tagline {
+      font-size: 16px;
+      color: var(--grey);
+      line-height: 1.5;
+      max-width: 440px;
+    }
+
+    .hero-tagline strong {
+      color: var(--white);
+    }
+
+    /* ───────────────────────────── WHAT IS UCP ───────────────────────────── */
+    #ucp { background: var(--darker); }
+
+    .section-label {
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--lime);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-title {
+      font-family: var(--ff-display);
+      font-size: clamp(42px, 12vw, 72px);
+      color: var(--white);
+      margin-bottom: 32px;
+      line-height: 0.95;
+    }
+
+    /* UCP Definition Card */
+    .def-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .def-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--lime);
+    }
+
+    .def-card p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #ccc;
+    }
+
+    .def-card p strong {
+      color: var(--lime);
+    }
+
+    .def-card p em {
+      color: var(--white);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* Capability pills */
+    .caps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .cap-pill {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 12px;
+      color: var(--grey);
+      letter-spacing: 0.05em;
+    }
+
+    /* ───────────────────────────── STORY / TIMELINE ───────────────────────────── */
+    #story { }
+
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--lime), var(--lime-dim) 60%, transparent);
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 48px;
+    }
+
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -34px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 12px var(--lime-glow-strong);
+    }
+
+    .tl-time {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      color: var(--lime);
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    .tl-heading {
+      font-family: var(--ff-display);
+      font-size: clamp(30px, 9vw, 52px);
+      line-height: 0.95;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .tl-desc {
+      font-size: 15px;
+      color: #aaa;
+      line-height: 1.65;
+    }
+
+    .tl-desc strong { color: var(--white); }
+
+    /* Result badge for Sunday */
+    .result-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .result-badge {
+      background: rgba(178, 240, 0, 0.08);
+      border: 1px solid var(--lime);
+      border-radius: 4px;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .result-badge-num {
+      font-family: var(--ff-display);
+      font-size: 28px;
+      color: var(--lime);
+      line-height: 1;
+    }
+
+    .result-badge-label {
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      color: var(--grey);
+      letter-spacing: 0.1em;
+    }
+
+    /* ───────────────────────────── HOW ───────────────────────────── */
+    #how { background: var(--darker); }
+
+    .how-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .how-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease;
+    }
+
+    .how-card:hover { border-color: var(--border); }
+
+    .how-card-num {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      color: var(--lime);
+      letter-spacing: 0.15em;
+      margin-bottom: 14px;
+    }
+
+    .how-card-title {
+      font-family: var(--ff-display);
+      font-size: 32px;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .how-card-desc {
+      font-size: 14px;
+      color: #999;
+      line-height: 1.6;
+    }
+
+    .how-card-desc strong { color: var(--lime); }
+
+    /* Toolbox pills */
+    .toolbox {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tool-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(178, 240, 0, 0.07);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-family: var(--ff-mono);
+      font-size: 12px;
+      color: var(--lime);
+    }
+
+    /* ───────────────────────────── PROMPTS ───────────────────────────── */
+    #prompts { }
+
+    .terminal-window {
+      background: #0e0e0e;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .terminal-bar {
+      background: #1a1a1a;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green { background: #28c840; }
+
+    .terminal-title {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      color: var(--grey);
+      margin-left: 6px;
+    }
+
+    .terminal-body {
+      padding: 20px;
+    }
+
+    .prompt-line {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+
+    .prompt-arrow {
+      color: var(--lime);
+      font-family: var(--ff-mono);
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .prompt-text {
+      font-family: var(--ff-mono);
+      font-size: 13px;
+      color: #ccc;
+      line-height: 1.5;
+    }
+
+    .prompt-text .kw { color: var(--lime); }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--lime);
+      vertical-align: text-bottom;
+      animation: blink 1.1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ───────────────────────────── STATS ───────────────────────────── */
+    #stats { background: var(--card); }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .stat-cell {
+      background: var(--darker);
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--ff-display);
+      font-size: clamp(44px, 13vw, 72px);
+      color: var(--lime);
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-unit {
+      font-family: var(--ff-display);
+      font-size: 20px;
+      color: var(--lime-dim);
+    }
+
+    .stat-label {
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      color: var(--grey);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .stat-cell.full {
+      grid-column: 1 / -1;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ───────────────────────────── TAKEAWAYS ───────────────────────────── */
+    #takeaways { }
+
+    .takeaway-list {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .takeaway-item {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .takeaway-item:last-child { border-bottom: none; }
+
+    .takeaway-num {
+      font-family: var(--ff-display);
+      font-size: 52px;
+      color: var(--lime);
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 44px;
+      opacity: 0.6;
+    }
+
+    .takeaway-content { }
+
+    .takeaway-title {
+      font-family: var(--ff-display);
+      font-size: clamp(26px, 8vw, 40px);
+      color: var(--white);
+      line-height: 0.95;
+      margin-bottom: 8px;
+    }
+
+    .takeaway-desc {
+      font-size: 14px;
+      color: #999;
+      line-height: 1.6;
+    }
+
+    /* ───────────────────────────── LINKS ───────────────────────────── */
+    #links { background: var(--darker); }
+
+    .links-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 20px;
+      text-decoration: none;
+      transition: border-color 0.25s, background 0.25s;
+      gap: 12px;
+    }
+
+    .link-card:hover {
+      border-color: var(--lime);
+      background: rgba(178,240,0,0.04);
+    }
+
+    .link-card-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .link-card-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .link-card-url {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      color: var(--grey);
+    }
+
+    .link-arrow {
+      color: var(--lime);
+      font-size: 20px;
+      flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+
+    .link-card:hover .link-arrow {
+      transform: translateX(4px);
+    }
+
+    /* ───────────────────────────── FOOTER ───────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .footer-word {
+      font-family: var(--ff-display);
+      font-size: clamp(52px, 18vw, 100px);
+      color: var(--lime);
+      letter-spacing: 0.05em;
+      line-height: 1;
+      display: block;
+      margin-bottom: 24px;
+    }
+
+    .footer-meta {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      color: var(--grey);
+      letter-spacing: 0.1em;
+    }
+
+    /* ───────────────────────────── RESPONSIVE ───────────────────────────── */
+    @media (min-width: 480px) {
+      .stat-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .stat-cell.full {
+        grid-column: auto;
+        border-top: none;
+      }
+    }
+
+    /* ─── Mobile-only adjustments ─── */
+    @media (max-width: 380px) {
+      .hero-headline { font-size: 54px; }
+      .def-card { padding: 20px; }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav>
+    <span class="nav-logo">WIX // CreatorZ Day</span>
+    <span class="nav-tag">Feb 2026</span>
+  </nav>
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section id="hero">
+    <div class="container">
+      <p class="hero-eyebrow reveal">CreatorZ Guild Day Presentation</p>
+
+      <h1 class="hero-headline reveal reveal-delay-1">
+        MY UCP STORY
+        <span class="accent">LEADER&shy;SHIP</span>
+        <span class="sub">IN THE AGE OF AI</span>
+      </h1>
+
+      <div class="hero-photo-card reveal reveal-delay-2">
+        <img src="itay-lecture.jpg" alt="Itay Shmool giving the lecture at Wix CreatorZ Day" loading="lazy" />
+        <div class="photo-border"></div>
+        <div class="photo-badge">
+          <div class="photo-badge-name">Itay Shmool</div>
+          <div class="photo-badge-title">Chairman, Premium Services &amp; Payments</div>
+        </div>
+        <div class="photo-corner">LIVE</div>
+      </div>
+
+      <p class="hero-tagline reveal reveal-delay-3">
+        From a <strong>midnight curiosity</strong> to a fully working protocol implementation —
+        in a single weekend, with AI as co-pilot.
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════ WHAT IS UCP ═══════════════ -->
+  <section id="ucp">
+    <div class="container">
+      <p class="section-label reveal">01 / Context</p>
+      <h2 class="section-title reveal reveal-delay-1">WHAT<br>IS UCP?</h2>
+
+      <div class="def-card reveal reveal-delay-2">
+        <p>
+          The <em>Universal Commerce Protocol</em> (<strong>UCP</strong>) is an open-source
+          standard developed by <strong>Google</strong> to enable seamless
+          <strong>"agentic commerce"</strong> — allowing AI agents to directly
+          search for products, check inventory, and complete purchases on behalf of users.
+          It acts as a universal language for AI, reducing <strong>checkout friction</strong>
+          and eliminating the need for custom integrations between merchants and
+          various AI platforms.
+        </p>
+        <div class="caps">
+          <span class="cap-pill">Search Products</span>
+          <span class="cap-pill">Check Inventory</span>
+          <span class="cap-pill">Manage Carts</span>
+          <span class="cap-pill">Complete Purchases</span>
+          <span class="cap-pill">Track Orders</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════ THE STORY ═══════════════ -->
+  <section id="story">
+    <div class="container">
+      <p class="section-label reveal">02 / The Story</p>
+      <h2 class="section-title reveal reveal-delay-1">FROM<br>BED TO BUILD</h2>
+
+      <div class="timeline">
+
+        <div class="tl-item reveal">
+          <div class="tl-time">Thursday, 22:00</div>
+          <h3 class="tl-heading">HALF<br>ASLEEP<br>IN BED</h3>
+          <p class="tl-desc">
+            Just wanted to read <strong>"what is UCP?"</strong> on Claude Desktop.
+            One question led to another. <strong>Things escalated quickly.</strong>
+            Me &amp; Claude — late at night, chasing a rabbit hole.
+          </p>
+        </div>
+
+        <div class="tl-item reveal reveal-delay-1">
+          <div class="tl-time">Friday → Saturday</div>
+          <h3 class="tl-heading">FROM<br>IDEA TO<br>SPEC</h3>
+          <p class="tl-desc">
+            Moved to Cursor. Defined the full spec first — <strong>no code yet.</strong>
+            Created Cursor Rules that describe functionality in modules.
+            <strong>CDD: Cursor-Driven Development.</strong>
+          </p>
+        </div>
+
+        <div class="tl-item reveal reveal-delay-2">
+          <div class="tl-time">Sunday</div>
+          <h3 class="tl-heading">SHIP&shy;PED.</h3>
+          <p class="tl-desc">
+            Two days later — done. Full implementation, test app, PR draft &amp; Engineering blog.
+          </p>
+          <div class="result-badges">
+            <div class="result-badge">
+              <span class="result-badge-num">✓</span>
+              <span class="result-badge-label">Protocol Impl.</span>
+            </div>
+            <div class="result-badge">
+              <span class="result-badge-num">✓</span>
+              <span class="result-badge-label">Test App + Checkout</span>
+            </div>
+            <div class="result-badge">
+              <span class="result-badge-num">✓</span>
+              <span class="result-badge-label">PR Draft + Eng. Blog</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════ HOW ═══════════════ -->
+  <section id="how">
+    <div class="container">
+      <p class="section-label reveal">03 / Method</p>
+      <h2 class="section-title reveal reveal-delay-1">HOW?</h2>
+
+      <div class="how-grid">
+
+        <div class="how-card reveal">
+          <div class="how-card-num">METHOD_01</div>
+          <div class="how-card-title">CDD</div>
+          <div class="how-card-desc">
+            <strong>Cursor-Driven Development</strong> — spec first, then code.
+            Write rules that describe functionality. Let AI implement against a clear contract.
+            No blind vibe-coding.
+          </div>
+        </div>
+
+        <div class="how-card reveal reveal-delay-1">
+          <div class="how-card-num">METHOD_02</div>
+          <div class="how-card-title">YOUR TOOLBOX</div>
+          <div class="how-card-desc">Know your tools deeply. Have them ready before you need them.</div>
+          <div class="toolbox">
+            <span class="tool-chip">⚡ Claude</span>
+            <span class="tool-chip">⚡ Cursor</span>
+            <span class="tool-chip">⚡ Render</span>
+            <span class="tool-chip">⚡ GitHub</span>
+          </div>
+        </div>
+
+        <div class="how-card reveal reveal-delay-2">
+          <div class="how-card-num">METHOD_03</div>
+          <div class="how-card-title">MCP SETUP</div>
+          <div class="how-card-desc">
+            <strong>MCP for everything.</strong> Natural language all the way.
+            Let AI talk to your tools directly — no glue code, no switching contexts.
+          </div>
+        </div>
+
+        <div class="how-card reveal reveal-delay-3">
+          <div class="how-card-num">METHOD_04</div>
+          <div class="how-card-title">PASSION</div>
+          <div class="how-card-desc">
+            The multiplier that makes <strong>22:00 in bed</strong> turn into
+            a weekend-long build. No tool replaces genuine curiosity.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════ PROMPTS ═══════════════ -->
+  <section id="prompts">
+    <div class="container">
+      <p class="section-label reveal">04 / The Conversation</p>
+      <h2 class="section-title reveal reveal-delay-1">THE "NAIVE"<br>PROMPTS</h2>
+      <p class="grey reveal reveal-delay-2" style="margin-bottom:24px;font-size:14px;">
+        Simple questions. Compounding answers. This is how it started.
+      </p>
+
+      <div class="terminal-window reveal reveal-delay-3">
+        <div class="terminal-bar">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+          <span class="terminal-title">claude — conversation thread</span>
+        </div>
+        <div class="terminal-body">
+          <div class="prompt-line">
+            <span class="prompt-arrow">→</span>
+            <span class="prompt-text">What is <span class="kw">google UCP protocol</span>?</span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-arrow">→</span>
+            <span class="prompt-text">Describe the <span class="kw">solution architecture</span></span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-arrow">→</span>
+            <span class="prompt-text">How can <span class="kw">Wix Payments plug into it</span>?</span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-arrow">→</span>
+            <span class="prompt-text">Economics question — what does <span class="kw">Google get</span> as a result?</span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-arrow">→</span>
+            <span class="prompt-text">Merchants currently pay for <span class="kw">ads</span> — how will they pay Google <span class="kw">now</span>?</span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-arrow">→</span>
+            <span class="prompt-text">Summarize our discussion to an <span class="kw">MD file</span> for NotebookLM<span class="cursor-blink"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════ STATS ═══════════════ -->
+  <section id="stats">
+    <div class="container">
+      <p class="section-label reveal">05 / The Output</p>
+      <h2 class="section-title reveal reveal-delay-1">PROJECT<br>SIZE</h2>
+
+      <div class="stat-grid reveal reveal-delay-2">
+        <div class="stat-cell">
+          <span class="stat-num" data-target="65">0</span>
+          <span class="stat-label">Source Files</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-num" data-target="21" data-suffix="K">0</span>
+          <span class="stat-label">Lines of Code</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-num" data-target="176">0</span>
+          <span class="stat-label">Tests Written</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-num" data-target="2">0</span>
+          <span class="stat-label">Days to Build</span>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;" class="reveal">
+        <div class="def-card">
+          <p>
+            Multi-tenant <em>Express app</em> covering <strong>UCP</strong>, <strong>MCP</strong>, and <strong>A2A</strong>.
+            Structured in layers: <span style="color:var(--lime);font-family:var(--ff-mono);font-size:13px">routes/</span>,
+            <span style="color:var(--lime);font-family:var(--ff-mono);font-size:13px">services/</span>,
+            <span style="color:var(--lime);font-family:var(--ff-mono);font-size:13px">wix/</span>.
+            Fourteen distinct implementation phases.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════ TAKEAWAYS ═══════════════ -->
+  <section id="takeaways">
+    <div class="container">
+      <p class="section-label reveal">06 / Main Takeaways</p>
+      <h2 class="section-title reveal reveal-delay-1">FOR YOU</h2>
+
+      <ul class="takeaway-list">
+        <li class="takeaway-item reveal">
+          <span class="takeaway-num">1</span>
+          <div class="takeaway-content">
+            <div class="takeaway-title">YOU ARE A CREATOR</div>
+            <p class="takeaway-desc">
+              You can develop everything E2E by yourself. The barrier to building is lower than ever.
+              The only thing standing between you and shipping is starting.
+            </p>
+          </div>
+        </li>
+        <li class="takeaway-item reveal reveal-delay-1">
+          <span class="takeaway-num">2</span>
+          <div class="takeaway-content">
+            <div class="takeaway-title">ALWAYS BE READY</div>
+            <p class="takeaway-desc">
+              Build your own toolbox. Know your tools before you need them.
+              When the idea hits at 22:00, you should be able to start immediately.
+            </p>
+          </div>
+        </li>
+        <li class="takeaway-item reveal reveal-delay-2">
+          <span class="takeaway-num">3</span>
+          <div class="takeaway-content">
+            <div class="takeaway-title">SEE THE BIG PICTURE</div>
+            <p class="takeaway-desc">
+              Think one step ahead — at least. UCP isn't just a protocol;
+              it's a shift in how commerce will work in an agentic world.
+              Connect the dots before others do.
+            </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════ LINKS ═══════════════ -->
+  <section id="links">
+    <div class="container">
+      <p class="section-label reveal">07 / Explore More</p>
+      <h2 class="section-title reveal reveal-delay-1">LINKS</h2>
+
+      <div class="links-grid">
+        <a href="https://www.creatorsday.fun/" target="_blank" rel="noopener" class="link-card reveal">
+          <div class="link-card-left">
+            <span class="link-card-label">CreatorZ Day Toolbox</span>
+            <span class="link-card-url">creatorsday.fun</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+        <a href="https://github.com/google/A2A" target="_blank" rel="noopener" class="link-card reveal reveal-delay-1">
+          <div class="link-card-left">
+            <span class="link-card-label">UCP Protocol (Google)</span>
+            <span class="link-card-url">Universal Commerce Protocol</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+        <a href="https://dev.wix.com/docs/build-apps/develop-your-app/use-wix-sdks/wix-headless/about-wix-headless" target="_blank" rel="noopener" class="link-card reveal reveal-delay-2">
+          <div class="link-card-left">
+            <span class="link-card-label">Wix Headless</span>
+            <span class="link-card-url">dev.wix.com</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <footer>
+    <span class="footer-word reveal">THANKS.</span>
+    <p class="footer-meta reveal reveal-delay-1">
+      Itay Shmool &nbsp;·&nbsp; Chairman, Premium Services &amp; Payments &nbsp;·&nbsp; Wix.com
+      <br />CreatorZ Day 2026
+    </p>
+  </footer>
+
+  <!-- ─── JS ─── -->
+  <script>
+    // Intersection Observer for reveal animations
+    const revealEls = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el => io.observe(el));
+
+    // Counter animation for stats
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.target, 10);
+      const suffix = el.dataset.suffix || '';
+      const duration = 1400;
+      const start = performance.now();
+
+      function step(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(eased * target);
+        el.textContent = current + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    const statEls = document.querySelectorAll('.stat-num[data-target]');
+    const statObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animateCounter(e.target);
+          statObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    statEls.forEach(el => statObserver.observe(el));
+  </script>
+
+</body>
+</html>
